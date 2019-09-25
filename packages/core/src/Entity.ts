@@ -1,4 +1,4 @@
-import { Signal2 } from '@ash.ts/signals';
+import { Signal1, Signal2 } from '@ash.ts/signals';
 import { ClassType } from './types';
 
 /**

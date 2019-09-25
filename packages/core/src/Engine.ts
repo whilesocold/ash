@@ -1,4 +1,4 @@
-import { Signal0 } from '@ash.ts/signals';
+import { Signal0, Signal1 } from '@ash.ts/signals';
 import { ClassType, NodeClassType } from './types';
 import { ComponentMatchingFamily } from './ComponentMatchingFamily';
 import { Entity } from './Entity';
@@ -36,6 +36,16 @@ export class Engine {
   public updateComplete:Signal0;
 
   /**
+   * This signal is dispatched when a entity is added.
+   */
+  public entityAdded:Signal1<Entity>;
+
+  /**
+   * This signal is dispatched when a entity is removed.
+   */
+  public entityRemoved:Signal1<Entity>;
+
+  /**
    * The class used to manage node lists. In most cases the default class is sufficient
    * but it is exposed here so advanced developers can choose to create and use a
    * different implementation.
@@ -50,6 +60,8 @@ export class Engine {
     this.systemList = new SystemList();
     this.families = new Map<NodeClassType<any>, Family<any>>();
     this.updateComplete = new Signal0();
+    this.entityAdded = new Signal1();
+    this.entityRemoved = new Signal1();
   }
 
   /**
@@ -69,6 +81,7 @@ export class Engine {
     for (const family of this.families.values()) {
       family.newEntity(entity);
     }
+    this.entityAdded.dispatch(entity);
   }
 
   /**
@@ -85,6 +98,7 @@ export class Engine {
     }
     this.entityNames.delete(entity.name);
     this.entityList.remove(entity);
+    this.entityRemoved.dispatch(entity);
   }
 
   private entityNameChanged = (entity:Entity, oldName:string) => {
